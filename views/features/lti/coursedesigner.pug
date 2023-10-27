@@ -1,0 +1,184 @@
+extends ../../common/layout_lti
+
+block content
+    div.container-fluid
+        div.jumbotron
+            div(class="modal-header")
+                h2 Configuração
+            div(class="modal-body")
+                ul(class="nav nav-tabs" id="tabContent")
+                    li(class="active")
+                        a(href="#config_subject" data-toggle="tab") Assunto 
+                    li
+                        a(href="#config_statistics" data-toggle="tab") Estatística de acesso
+                    li
+                        a(href="#config_rating" data-toggle="tab") Ranking dos conteúdos 
+                    li
+                        a(href="#config_rating" data-toggle="tab") Comentários
+                        
+            div(class="modal-body")
+                    form(id="fm_lms" action="/lms/cd" method="POST")
+                        div.tab-content
+                            div(class="tab-pane active" id="config_subject")                        
+                                input(type="hidden" id="lms_enabledtaxonomies" name="lms_enabledtaxonomies" value="")
+
+                                - var taxonomies = p.client.lms.taxonlist;
+
+                                div(class="form-group")
+                                     label(for="lob_type") Selecione a Árvore
+                                     select(class="form-control" id="taxon_tree" name="taxon_tree" )
+                                         option Selecione a árvore
+                                         each item in taxonomies
+                                            option(value=item._id ) #{item.structure.name}    
+                                div.row-fluid
+                                   div.span12   
+                                       div(id="tree" class="span6")
+
+
+                                div(class="form-group")
+                                    button(class="btn btn-primary" id="console" type="submit") Salvar  
+
+                            div(class="tab-pane" id="config_statistics")
+                                div(class="form-group")
+                                    label(for="lms_name") TBD
+                            div(class="tab-pane" id="config_rating")
+                                div(class="form-group")
+                                    label(for="lms_name") TBD
+
+block action
+    div.container-fluid
+        ul(class="nav navbar-nav")
+            li
+                a  
+                    button(class="btn btn-danger" id="console" onclick=("navigateTo('/console')")) Retornar  
+            
+    script.
+        var p = !{JSON.stringify(p)}
+        
+        if ("lti_link"  in p.client.lms) {
+        } else {    
+             p.client.lms.lti_link = [];
+        }
+             
+        var x = p.client.lms.lti_link;
+ 
+        var ctx = !{JSON.stringify(p.body)}
+        var t = !{JSON.stringify(p.client.lms.taxonlist)}
+        var enabled_trees = !{JSON.stringify(p.client.lms.enabled_taxonomies)}
+        
+        var selectedNode = {tree:null, node: 0};
+        var selected_nodes = [{}];
+       
+
+        selected_nodes.save = function(n) {
+            $('#lms_enabledtaxonomies').val(JSON.stringify(n));
+        };       
+
+        var load = function(selectedTree, tree, selectednode)  {
+           console.log(selectednode);
+            var nodes = [];
+                
+
+            var check =  function(id) {
+                var enabled = false;
+                tree.nodes.forEach(function(item) {
+                  if (id === item) {
+                       enabled = true;
+                    }
+                });
+                return enabled;
+            }; 
+
+            var checkSelected =  function(item,id) {
+                return item === id;
+            }; 
+
+
+            var validate = function(subtree) {
+                if (check(subtree.id)) {
+                  nodes.push({id: subtree.id, path: subtree.path, text: subtree.text, state: {checked:checkSelected(subtree.id,selectednode)}});
+                }
+                for (var i = 0; i < subtree.nodes.length; i++) {
+                    validate(subtree.nodes[i]);
+                }
+                return nodes;
+            };
+         
+            return validate(selectedTree.tree);
+        };
+        
+        var getltilink = function() {
+                var innerLinks  = x.filter(item => item.resource.resource_link_id == ctx.resource_link_id);
+                var lastValue = Math.max.apply(Math,innerLinks.map(function(o) {return o.creation_date}));
+                return x.filter(item => item.creation_date == lastValue)[0];
+               
+        };    
+
+        loadTree(getltilink());
+
+        function loadTree(item) {
+                console.log(item);
+                if (item != undefined) {
+                
+                    if (item.taxonomy.tree != "") { 
+                        $('#taxon_tree option[value=' + item.taxonomy.tree + ']').attr('selected','selected');
+
+                        var enabled_taxon = enabled_trees.filter(el => el.tree === $('#taxon_tree').val())[0];
+                        if (enabled_taxon == undefined) {   
+                              enabled_taxon = {tree:"", nodes:[]};
+                        }
+                        var obj = t.filter(x => x._id === $('#taxon_tree').val())[0];
+                        var filteredTree = [{text: "Selecione o assunto" ,id: -1 ,selectable: false, path: "", nodes: load(obj, enabled_taxon,item.taxonomy.node.id) }];    
+
+
+                        selectedNode = {tree: null, node: 0};  
+                        var $tree = $('#tree').treeview({data: filteredTree, showCheckbox: true, levels:2});
+                    }
+                }
+
+
+
+
+        
+        }    
+
+
+
+
+        $('#taxon_tree').change(function() {
+                var enabled_taxon = enabled_trees.filter(el => el.tree === $('#taxon_tree').val())[0];
+                if (enabled_taxon == undefined) {   
+                      enabled_taxon = {tree:"", nodes:[]};
+                }
+                var obj = t.filter(x => x._id === $('#taxon_tree').val())[0];
+                var filteredTree = [{text: "Selecione o assunto" ,id: -1 ,selectable: false, path: "", nodes: load(obj, enabled_taxon) }];    
+
+                selectedNode = {tree: null, node: 0};  
+   
+                var $tree = $('#tree').treeview({data: filteredTree, showCheckbox: true, levels:2});
+                
+                $tree.load = function() {
+                    $(this).treeview('checkNode', [ nodeId, { silent: true } ]);
+                    for(var i in node.nodes) {
+                        var child = node.nodes[i];
+                        $(this).treeview(true).checkNode(child.nodeId);
+                    }                    
+                }
+                
+                $tree.on('nodeChecked', function(ev, node) {
+                    $(this).treeview('uncheckAll', { silent: false });
+                    
+                    if (node.id !== -1) {
+                        $(this).treeview('checkNode', [ node.nodeId, { silent: true } ]);
+                        selected_nodes.save({tree: $('#taxon_tree').val(), node: node});
+                    }
+                    
+                }).on('nodeUnchecked', function(ev, node) {
+                    
+                    selected_nodes.save(""); 
+
+                });
+        });  
+          
+
+   

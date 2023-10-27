@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  p Create a new bucket
+  form(name="new", method="post" action="createbucket")
+    div#bucketform
+      p Inform the new bucket name: 
+      input(type="text", name="bucketId", value="")
+    input(type="submit", value="Create Bucket")

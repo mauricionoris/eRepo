@@ -1,0 +1,59 @@
+html
+    head
+        link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+    body
+        div.container
+            .row
+                form(id='frm_subject' method='POST' action='/lti/launch/srls')
+                    .panel.panel-info
+                      .panel-heading
+                          h3 Welcome #{inf.username} !
+                          h5 This is the course designer page of #{inf.resource_link_title}
+                      .panel-body
+                        .row
+                           table.table.table-user-information
+                              tbody
+                                tr
+                                  td Select the subject
+                                  td 
+                                      select(id="listSubjects", name="listSubjects")
+                                        option(value='0') 
+                                        for s in inf.subjects
+                                            option(value='#{s.subject_id}', selected=('#{inf.selected_subject_id}' == '#{s.subject_id}')) #{s.title}
+                                tr                    
+                                  td Detail
+                                  td
+                                     div(id='detail_show')
+
+                      .panel-footer
+                          button.btn.btn-success(type='button' id='save') Save
+                          span 
+                          button.btn.btn-warning(type='button' id='return') Close
+                    input(type='hidden' name='inf', id='inf' value='#{JSON.stringify(inf)}')
+                                    
+      
+            #myModal3.modal.fade(role='dialog')
+              .modal-dialog
+                // Modal content
+                .modal-content
+                  .modal-header
+                    button.close(type='button', data-dismiss='modal') ×
+                    h4.modal-title Subject changed
+                  .modal-body
+                    p Now the students would be shown educational objects related to it
+                  .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal' id='returnModal') Close
+                    
+            
+            //textarea(class="ta" rows=25)
+            //    #{JSON.stringify(body)}
+                
+
+
+
+
+    script(type='text/javascript' src='http://code.jquery.com/jquery.min.js')
+    script(type='text/javascript' src='/javascripts/bootstrap.min.js')
+    script(rel='text/javascript'  src='/javascripts/coursedesignerview.js')
+    

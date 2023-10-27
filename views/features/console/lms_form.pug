@@ -1,0 +1,197 @@
+extends ../../common/layout
+
+block content
+    div(class="modal show" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel")
+        div(class="modal-dialog modal-lg" role="document")
+            div(class="modal-content")
+                div(class="modal-header")
+                    button(class="close" data-dismiss="modal" onclick=("navigateTo('/console/lms')")) 
+                        span(aria-hidden="true") &times;
+                    h4(class="modal-title") #{p.console.lms_edit.name}
+                div(class="modal-body")
+                    ul(class="nav nav-tabs" id="tabContent")
+                        li(class="active")
+                            a(href="#lms_info" data-toggle="tab") Cadastro
+                        li
+                            a(href="#lms_parameters" data-toggle="tab") Parâmetros Adaptabilidade
+                        li
+                            a(href="#lms_taxonomies" data-toggle="tab") Taxonomias Habilitadas
+
+                div(class="modal-body")
+                    form(id="fm_lms" action="/console/lms/form" method="POST")
+                        div.tab-content
+                            div(class="tab-pane active" id="lms_info")
+                                input(type="hidden" name="lms_id" value=p.console.lms_edit.id)
+                            
+                                div(class="form-group")
+                                    label(for="lms_name") Nome
+                                    input(class="form-control" type="text" id="lms_name" name="lms_name" value=p.console.lms_edit.name) 
+                                div(class="form-group")
+                                    label(for="lms_platform") Plataforma
+                                    input(class="form-control" type="text" id="lms_platform" name="lms_platform" value=p.console.lms_edit.platform)
+                                div(class="form-group")
+                                    label(for="lms_version") Versão
+                                    input(class="form-control" type="text" id="lms_version" name="lms_version" value=p.console.lms_edit.version)
+                                div(class="form-group")
+                                    label(for="lms_url") URL
+                                    input(class="form-control" type="text" id="lms_url" name="lms_url" value=p.console.lms_edit.url)
+                                div(class="form-group")
+                                    label(for="lms_key") Chave
+                                    input(class="form-control" type="text" id="lms_key" name="lms_key" value=p.console.lms_edit.key)
+                                div(class="form-group")
+                                    label(for="lms_secret") Segredo
+                                    input(class="form-control" type="text" id="lms_secret" name="lms_secret" value=p.console.lms_edit.secret)
+                                div(class="form-group")
+                                    label(for="lms_active") Ativo
+                                        input(type="checkbox" class="checkbox" id="lms_active" name="lms_active" checked=p.console.lms_edit.active)                                    
+      
+
+                            div(class="tab-pane" id="lms_parameters")
+                                - var ad_w = p.console.lms_edit.parameters.adaptation_weight;
+                                            
+                                div(class="form-group")
+                                    label(for="lms_param_reco") Peso recomendação na adaptação
+                                        p(id="lms_param_reco_txt") #{ad_w.recommendation*100}%
+                                    input(class="form-control" type="range" id="lms_param_reco" name="lms_param_reco" min=0 max=1 step=0.05 value=ad_w.recommendation)
+           
+                                div(class="form-group")
+                                    label(for="lms_param_style") Peso estilo aprendizagem na adaptação
+                                        p(id="lms_param_style_txt") #{ad_w.learning_style*100}%
+                                    input(class="form-control" type="range" id="lms_param_style" name="lms_param_style" min=0 max=1 step=0.05 value=ad_w.learning_style)
+                                
+
+                            div(class="tab-pane" id="lms_taxonomies")
+                             input(type="hidden" id="lms_enabledtaxonomies" name="lms_enabledtaxonomies" value="")
+                               
+                             - var taxonomies = p.console.lms_edit.taxonomylist;
+                                 
+                                div(class="form-group")
+                                     label(for="lob_type") Selecione a Árvore
+                                     select(class="form-control" id="taxon_tree" name="taxon_tree" )
+                                         option Selecione a árvore
+                                         each item in taxonomies
+                                            option(value=item._id ) #{item.structure.name}    
+                                div.row-fluid
+                                   div.span12   
+                                       div(id="tree" class="span6")
+
+                            ul.list-inline
+                                li
+                                    button(class="btn btn-primary" type="submit" id="lms_form_action") Salvar
+                if p.console.lms_edit.id !== null
+        
+                div(class="modal-body")
+                    form(id="fm_removelms" action="/console/lms/remove" method="POST")
+                        input(type="hidden" name="lms_id_remove" value=p.console.lms_edit.id)                    
+                        div.tab-content                
+                            button(class="btn btn-danger " type="submit") Excluir
+
+                div(class="modal-footer")
+                    button(class="close" data-dismiss="modal" onclick=("navigateTo('/console/lms')")) Fechar
+
+               
+    script.
+        var t = !{JSON.stringify(p.console.lms_edit.taxonomylist)}
+        var selectedNode = {tree:null, node: 0};
+        var enabled_trees = !{JSON.stringify(p.console.lms_edit.enabled_taxonomies)}
+
+
+       
+        enabled_trees.update = function(item) {
+                                for (var i = 0; i < this.length; i++) {
+                                  if (item.tree === this[i].tree) {
+                                    return this[i].nodes = item.nodes;
+                                  }
+                                }
+                                    return this.push(item);
+                                };
+        enabled_trees.save = function() {
+            $('#lms_enabledtaxonomies').val(JSON.stringify(this));
+        };       
+
+        var load = function(selectedTree, tree)  {
+             
+            var check =  function(id) {
+                var enabled = false;
+                tree.nodes.forEach(function(item) {
+                  if (id === item) {
+                       enabled = true;
+                    }
+                });
+                return enabled;
+            }; 
+
+            var validate = function(subtree) {
+                subtree.state = {checked: check(subtree.id)};
+                for (var i = 0; i < subtree.nodes.length; i++) {
+                    validate(subtree.nodes[i]);
+                }
+                return subtree;
+            };
+            return validate(selectedTree.tree);    
+        };
+         
+        $('#taxon_tree').change(function() {
+                var enabled_taxon = enabled_trees.filter(el => el.tree === $('#taxon_tree').val())[0];
+                if (enabled_taxon == undefined) {   
+                      enabled_taxon = {tree:"", nodes:[]};
+                }
+                var obj = t.filter(x => x._id === $('#taxon_tree').val())[0];
+                var selectedTree = [{text: obj.tree.text,id: obj.tree.id , path: obj.tree.id, nodes: obj.tree.nodes , expand: obj.expand}];    
+                selectedNode = {tree: null, node: 0};    
+                load(obj, enabled_taxon);
+                var $tree = $('#tree').treeview({data: selectedTree, showCheckbox: true});
+                $tree.load = function() {
+                    $(this).treeview('checkNode', [ nodeId, { silent: true } ]);
+                    for(var i in node.nodes) {
+                        var child = node.nodes[i];
+                        $(this).treeview(true).checkNode(child.nodeId);
+                    }                    
+                }
+                $tree.on('nodeChecked ', function(ev, node) {
+                    enabled_taxon.tree = $('#taxon_tree').val();
+                    enabled_taxon.nodes.push(node.id);
+                    for(var i in node.nodes) {
+                        var child = node.nodes[i];
+                        $(this).treeview(true).checkNode(child.nodeId);
+                    }
+                    enabled_trees.update(enabled_taxon);
+                    enabled_trees.save(); 
+                }).on('nodeUnchecked ', function(ev, node) {
+                    enabled_taxon.nodes = enabled_taxon.nodes.filter(el => el !== node.id);                        
+                    for(var i in node.nodes) {
+                        var child = node.nodes[i];
+                        $(this).treeview(true).uncheckNode(child.nodeId);
+                    }
+                    enabled_trees.update(enabled_taxon);
+                    enabled_trees.save(); 
+
+                });
+        });  
+          
+
+        $('#lms_param_reco').change(function(){
+                var reco_w = $('#lms_param_reco').val();
+                var style_w = 1-reco_w;
+                //console.log(reco_w);
+                //console.log(style_w);
+                
+                $('#lms_param_style').val(style_w);
+                $('#lms_param_style_txt').text(Math.round(style_w*100,2) + '%');
+
+                $('#lms_param_reco_txt').text(Math.round(reco_w*100,2) + '%');
+
+
+            });
+        $('#lms_param_style').change(function(){
+                var style_w = $('#lms_param_style').val();
+                var reco_w = 1-style_w;
+                
+                $('#lms_param_style_txt').text(Math.round(style_w*100,2) + '%');
+
+                $('#lms_param_reco').val(reco_w);
+                $('#lms_param_reco_txt').text(Math.round(reco_w*100,2) + '%');
+
+                    //console.log('dfs');
+            }); 
+      

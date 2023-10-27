@@ -1,0 +1,192 @@
+extends ../../common/layout_lti
+
+block content
+    div.container-fluid
+
+        blockquote
+            div
+                h3 #{p.context_title}            
+                h4 Atividade: #{p.body.resource_link_title}
+                p  Aluno: #{p.body.lis_person_name_full}
+                p  Estilo de Aprendizagem:  
+                    span(id="student_ls" name="student_ls") #{p.body.lis_person_name_full}
+            br    
+            div(class="btn-toolbar")
+              div(class="btn-group")  
+                button(type="button" class="btn btn-danger") Opções
+                button(type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+                  span(class="caret")
+                  span(class="sr-only") Toggle Dropdown
+                ul(class="dropdown-menu" id="content_list")
+                  li(class="dropdown-header")
+                      h4 
+                       strong Funções
+                  li
+                      a(href="#") Requisitar novos conteúdos (TBD)
+                  li
+                      a(href="#" onclick="show_learningstyle(true);") Definir meu estilo de aprendizagem                  
+                  li(role="separator" class="divider")     
+                  li(class="dropdown-header")
+                      h4 
+                        strong Conteúdos
+
+              button(class="btn btn-primary" id="previous" onclick=("previous()") disabled)  << Anterior
+              button(class="btn btn-primary" id="next" onclick=("next()"))  Próximo >>
+              button(class="btn btn-danger" id="exit" onclick=("exit_activity()")) Sair da Atividade  
+        
+        div(hidden=true id="learningStyle" name="learningStyle")       
+            include ../../common/learningStyle
+            br
+            div(class="btn-toolbar")
+                button(class="btn btn-primary" type="submit") Definir   
+                button(type="button" class="btn btn-danger" onclick="show_learningstyle(false);") Retornar
+ 
+        div(hidden=false id="objExhibition")   
+            div(id="Classification" )
+                div
+                    input(id="ipt-id" type="text" class="rating" data-size="md")       
+                div
+                    label Comentários
+                    textarea(id="obj_comment" class="form-control")
+                    br
+                    button(class="btn btn-primary" id="comments" onclick=("comment_save()"))  Salvar Comentário
+        
+            label(id="objname")        
+            div(id="obj")
+
+block action
+    div.container-fluid
+            ul(class="nav navbar-nav")
+                li
+                    a  
+           
+
+    script.
+        var lobs = !{JSON.stringify(p.client.lob)};
+        var iObj = -1;
+        var start_view;
+        var launch_instant = Date.now();
+        
+        if (lobs.length > 0) {
+            content_menu_build();
+            load_lob();
+
+            $("#ipt-id").on('rating.change', function(event, value, caption) {
+                   lobs[iObj].rate = value;
+            });
+            $("#ipt-id").on('rating.clear', function(event) {
+                   lobs[iObj].rate = 0;
+            });            
+        }
+
+
+        function previous() {
+            interaction_record();
+            iObj=iObj-2;
+            load_lob();
+        }
+        
+        function next() {
+            interaction_record();
+            load_lob();
+        }
+        
+        function moveTo(id) {
+            interaction_record();            
+            iObj = id -1;
+            load_lob();
+        }
+
+        function exit_activity() {
+            if (lobs.length > 0) {
+                interaction_record();
+                //console.log(JSON.stringify(lobs));
+            }
+            var newForm = $('<form>', {
+                'method': 'POST'
+                }).append(jQuery('<input>', {
+                    'name': 'student_actions',
+                    'value':JSON.stringify(lobs),
+                    'type': 'hidden'
+                })).append(jQuery('<input>', {
+                    'name': 'launch_instant',
+                    'value':launch_instant,
+                    'type': 'hidden'}));
+            newForm.appendTo(document.body);
+            newForm.submit();
+            
+           }
+                  
+
+        function load_lob() {
+            iObj++;  //set the current object;
+            
+            $("#next").attr("disabled",(iObj===lobs.length-1));
+                 
+            start_view = Date.now();
+            set_control();
+            comment_load();
+            
+            //console.log(lobs[iObj]);
+            $("#objname").text(lobs[iObj].name);
+            $("#obj").html(function() {
+                return "<object data='" + lobs[iObj].object.Location + "'  width='100%' height='800px'></object>";
+            });
+            
+            $('#previous').attr("disabled",!(iObj > 0));
+        }
+        
+        function set_control() {
+            $("#ipt-id").rating("update",get_current_rate());
+        }
+        
+        function get_current_rate() {
+           var rate = 0;
+           if (typeof(lobs[iObj].rate) !== 'undefined') { rate = lobs[iObj].rate;}
+           //console.log('current value:' + rate);
+           return rate;
+        }
+        
+        function comment_save() {
+            lobs[iObj].comments =  $("#obj_comment").val();  
+        }
+
+        function comment_load() {
+            $("#obj_comment").val(lobs[iObj].comments);  
+        }
+        
+        
+        function interaction_record()         {
+            if (lobs[iObj].interactions === undefined) {
+                lobs[iObj].interactions=[];
+            }
+            lobs[iObj].interactions.push({start:start_view,end:Date.now()});
+        }
+        
+
+        function content_menu_build() {
+            var menu = $("#content_list");
+            lobs.forEach(function(item, index){
+                var el = "<li><a href='#' onclick=moveTo(" + index + ");>" + item.name + "</a></li>";
+                    menu.append(el);
+                   
+            });
+        } 
+        
+        function show_learningstyle(show) {
+            $('#learningStyle').attr('hidden', !show);
+            $('#objExhibition').attr('hidden', show);
+        }            
+        
+        function setStudentLearningStyle() {
+            var svLocation = 'http://' + $(location).attr('host') + '/lms/student/setlearningstyle';
+            $.post(svLocation),{
+                lms: 0,
+                student_id:0,
+                style: $('lob_style').val()
+                        
+            }, function(er, result) {
+               $('#student_ls').val(result); 
+            };
+        }
+

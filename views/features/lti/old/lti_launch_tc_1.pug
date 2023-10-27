@@ -1,0 +1,122 @@
+extends layout
+
+block content
+    div.container
+        .row
+            .col-xs-12.col-sm-12.col-md-15.col-lg-15.col-xs-offset-0.col-sm-offset-0.col-md-offset-3.col-lg-offset-3.toppad
+               form(enctype='application/x-www-form-urlencoded', id="ltiLaunchForm" method="POST" action="/lti/launch/tp")
+                .panel.panel-info
+                 .panel-heading
+                   h3.panel-title 
+                    button(type="button" id='submitButton').    
+                        Press to continue to external tool
+                 .panel-body
+                   .row
+                    .col-md-3.col-md-3
+                      table.table.table-launch
+                        tbody
+                           tr
+                                td tool_consumer_info_product_family_code
+                                td 
+                                    input(type='text', name='tool_consumer_info_product_family_code', value='ims')
+                            tr
+                                td oauth_signature_method
+                                td 
+                                    input(type='text', name='oauth_signature_method', value='HMAC-SHA1')
+                            tr
+                                td lis_outcome_service_url
+                                td 
+                                    input(type='text', name='lis_outcome_service_url', value='http://www.imsglobal.org/developers/LTI/test/v1p1/common/tool_consumer_outcome.php?b64=MTIzNDU6OjpzZWNyZXQ=')
+                            tr
+                                td tool_consumer_info_version
+                                td 
+                                    input(type='text', name='tool_consumer_info_version', value='1.1')
+                            tr
+                                td oauth_signature
+                                td 
+                                    input(type='text', name='oauth_signature' id='oauth_signature', value='')
+                            tr
+                                td resource_link_title
+                                td 
+                                    input(type='text', name='resource_link_title', value='Weekly Blog')                                    
+                            tr
+                                td lti_message_type
+                                td 
+                                    input(type='text', name='lti_message_type', value='basic-lti-launch-request')
+                            tr
+                                td lis_result_sourcedid
+                                td 
+                                    input(type='text', name='lis_result_sourcedid', value='feb-123-456-2929::28883')
+                            tr
+                                td lis_person_name_full
+                                td 
+                                    input(type='text', name='lis_person_name_full', value='Jane Q. Public')
+                            tr
+                                td Context Label
+                                td 
+                                    input(type='text', name='context_label', value='SI182')
+                            tr
+                                td oauth_consumer_key
+                                td 
+                                    input(type='text', name='oauth_consumer_key', value='moodle')
+                            tr
+                                td user_id
+                                td 
+                                    input(type='text', name='user_id', value='292832126')  
+                            tr
+                                td oauth_version
+                                td 
+                                    input(type='text', name='oauth_version', value='1.0')
+                            tr
+                                td resource_link_id
+                                td 
+                                    input(type='text', name='resource_link_id', value='120988f929-274612')
+                            tr
+                                td oauth_callback
+                                td 
+                                    input(type='text', name='oauth_callback', value='about:blank')
+                            tr
+                                td lis_person_contact_email_primary
+                                td 
+                                    input(type='text', name='lis_person_contact_email_primary', value='user@school.edu') 
+                            tr
+                                td roles
+                                td 
+                                    input(type='text', name='roles', value='Instructor')
+                            tr
+                                td launch_presentation_locale
+                                td 
+                                    input(type='text', name='launch_presentation_locale', value='en-US')
+                            tr
+                                td Context Title
+                                td 
+                                    input(type='text', name='context_title', value='Design of Personal Environments')
+                            tr
+                                td tool_consumer_instance_guid
+                                td 
+                                    input(type='text', name='tool_consumer_instance_guid', value='lmsng.school.edu')
+                            tr
+                                td oauth_timestamp
+                                td 
+                                    input(type='text', name='oauth_timestamp', id='oauth_timestamp', value='1348093590')
+                            tr
+                                td lti_version
+                                td 
+                                    input(type='text', name='lti_version', value='LTI-1p0')   
+                            tr
+                                td Context Id
+                                td 
+                                    input(type='text', name='context_id', value='456434513')
+                            tr
+                                td oauth_nonce
+                                td 
+                                    input(type='text', name='oauth_nonce', id='oauth_nonce', value='93ac608e18a7d41dec8f7219e1bf6a17')
+                            tr
+                                td tool_consumer_instance_description
+                                td 
+                                    input(type='text', name='tool_consumer_instance_description', value='University of School (LMSng)')
+
+
+    script(rel='text/javascript'  src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha1.js")
+    script(rel='text/javascript'  src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js")
+    script(rel='text/javascript'  src='/javascripts/lti.js')

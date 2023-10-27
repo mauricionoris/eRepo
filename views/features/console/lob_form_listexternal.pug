@@ -1,0 +1,38 @@
+div(class="form-group")
+    label(for="lob_avg_rating") Pasta
+    select(class="form-control" id="lob_externalbucket" name="lob_externalbucket")
+        
+
+div(class="form-group")
+    label(for="lob_avg_rating") Arquivos disponíveis
+    select(class="form-control" id="lob_externalobject" name="lob_externalobject")
+                   
+script.
+
+    (function() {
+      var getExternalBuckets = 'http://' + $(location).attr('host') + '/console/external/bucket';
+      $.getJSON(getExternalBuckets)
+        .done(function( data ) {
+             var s = $('#lob_externalbucket');
+             data.Buckets.forEach(function(item) {
+                 $('<option>').val(item.Name).text(item.Name).appendTo(s);
+             })  
+        });
+     })();
+     
+     
+     $('#lob_externalbucket').change(function(){
+        var getExternalObjects = 'http://' + $(location).attr('host') + '/console/external/objects/' + $('#lob_externalbucket').val();
+        console.log(getExternalObjects);
+         $.getJSON(getExternalObjects)
+           .done(function( data ) {
+                var s = $('#lob_externalobject');
+                s.find('option').remove();  
+                data.Contents.forEach(function(item) {
+                    $('<option>').val(item.Key).text(item.Key).appendTo(s);
+                });  
+           });
+        });        
+           
+     
+        

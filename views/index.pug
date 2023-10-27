@@ -1,0 +1,25 @@
+extends ./common/layout
+
+block content
+    div.container-fluid
+        div.jumbotron
+            h2 Distribuição automática de Objetos de Aprendizagem
+            br
+            br
+            h3 Trabalho apresentado ao IPT (Instituto de Pesquisas Tecnológicas)
+            br
+            h5 Orientador: Prof. Dr. Marcelo Rezende
+            h5 Mestrando: Mauricio Noris Freire (mauricio@toomtec.com)
+            a(href="/searchContext.html") Materias disponíveis
+        gcse:search
+            script.
+                (function() {
+                  var cx = '002606238307111054251:smdohds5izu';
+                  var gcse = document.createElement('script');
+                  gcse.type = 'text/javascript';
+                  gcse.async = true;
+                  gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+                  var s = document.getElementsByTagName('script')[0];
+                  s.parentNode.insertBefore(gcse, s);
+                })();
+          

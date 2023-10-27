@@ -1,0 +1,43 @@
+doctype html
+html
+    head
+        block head
+            block title
+                title Toomrepo - The web semantic repository
+            block meta
+                meta(name='description', content='')
+                meta(name='keywords', content='')
+                meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
+            link(rel='stylesheet', href='/bootstrap/dist/css/bootstrap.min.css')
+            link(rel='stylesheet', href='/bootstrap-star-rating/css/star-rating.min.css')
+          
+            link(rel='stylesheet', href='/stylesheets/style.css')
+            | <style>
+            | body { padding-top: 80px;padding-bottom:70px; }
+            | </style>
+            script(type='text/javascript' src='/jquery/dist/jquery.min.js')
+            script(type='text/javascript' src='/bootstrap/dist/js/bootstrap.min.js')
+            script(type='text/javascript' src='/bootstrap-treeview/dist/bootstrap-treeview.min.js')
+            script(type='text/javascript' src='/bootstrap-star-rating/js/star-rating.js')
+            script(type='text/javascript' src='/moment/min/moment.min.js')
+            script(type='text/javascript' src='/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')
+    body
+        include propertyWrapper
+        include header_lti
+
+        block content
+            div.container
+        block action 
+            div.container
+
+
+script.
+    function navigateTo(view) {
+        window.location.href = view;
+    
+    }
+
+    function dynamicFormSubmit(formId, action) {
+                $("#" + formId).attr("action",  action);
+                $("#" + formId).submit();
+        }

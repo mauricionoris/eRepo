@@ -1,0 +1,20 @@
+- var p = properties; 
+- var debug = showdetail;
+
+
+- if (typeof(p) === 'undefined') {
+-  p = {user:false}; 
+-  p.profile = {name: 'erro'};
+-}
+
+
+- if (typeof(debug) !== 'undefined') {
+-    if (debug) {
+pre
+   #{JSON.stringify(p, null, 4)}
+
+-    }
+
+- }
+
+

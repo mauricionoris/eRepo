@@ -1,0 +1,37 @@
+extends layout
+
+block content
+    div.container
+        form(enctype='application/x-www-form-urlencoded', id="ltiLaunchForm" method="POST" action="/lti/launch/tp")
+            ul
+                li lti_message_type: 
+                    input(type="text" name="lti_message_type" id="lti_message_type" value="basic-lti-launch-request")
+                li lti_version:
+                    input(type="text" name="lti_version" id="lti_version" value="LTI-1p0")
+                li oauth_consumer_key: 
+                    input(type="text" name="oauth_consumer_key" id ="oauth_consumer_key" value="moodle")
+                li oauth_nonce: 
+                    input(type="text" name="oauth_nonce" id="oauth_nonce" value="")
+                li oauth_signature_method:
+                    input(type="text" name="oauth_signature_method" id="oauth_signature_method" value="HMAC-SHA1")                    
+                li oauth_timestamp:
+                    input(type="text" name="oauth_timestamp" id="oauth_timestamp" value="")                    
+                li oauth_version:
+                    input(type="text" name="oauth_version" id="oauth_version" value="1.0")     
+                li resource_link_id: 
+                    input(type="text" name="resource_link_id" value="1")
+                li oauth_signature:
+                    input(type="text" name="oauth_signature" id="oauth_signature" value="supersecret")
+
+                li  
+                    button(type="button" id='submitButton').    
+                        Press to continue to external tool
+
+    script(rel='text/javascript'  src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha1.js")
+    script(rel='text/javascript'  src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js")
+    script(rel='text/javascript'  src='/javascripts/lti.js')
+
+
+
+//                li oauth_callback: 
+//                    input(type="text" name="oauth_callback" id="oauth_callback" value="about:blank")

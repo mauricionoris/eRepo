@@ -1,0 +1,255 @@
+extends ../../common/layout
+
+block content
+    div(class="modal show" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel")
+        div(class="modal-dialog modal-lg" role="document")
+            div(class="modal-content")
+                div(class="modal-header")
+                    button(class="close" data-dismiss="modal" onclick=("navigateTo('/console/lob')")) 
+                        span(aria-hidden="true") &times;
+                    h4(class="modal-title") #{p.console.lob_edit.name}
+                    
+                div(class="modal-body")
+                    ul(class="nav nav-tabs" id="tabContent")
+                        li(class="active")
+                            a(href="#lob_info" data-toggle="tab") 1.Geral
+                        li
+                            a(href="#lob_lifecycle" data-toggle="tab") 2.Ciclo de vida
+                        li
+                            a(href="#lob_educational" data-toggle="tab") 5.Educacional
+                        li
+                            a(href="#lob_taxonomies" data-toggle="tab") 9.Classificação
+                        li
+                            a(href="#lob_preview" data-toggle="tab") Preview  
+                        li
+                            a(href="#lob_metadata" data-toggle="tab") 3.Meta-Metadados (TBD)
+                        li
+                            a(href="#lob_reqexibition" data-toggle="tab") 4.Requisitos Técnicos (TBD)
+                        li
+                            a(href="#lob_rights" data-toggle="tab") 6.Direitos (TBD)
+                        li
+                            a(href="#lob_relation" data-toggle="tab") 7.Relação (TBD)
+                        li
+                            a(href="#lob_annotation" data-toggle="tab") 8. Anotações  (TBD)
+                        
+                 
+                div(class="modal-body")
+                    form(id="fm_lob" action="/console/lob/form" method="POST" encType="multipart/form-data")
+                        div.tab-content
+                            div(class="tab-pane active" id="lob_info")                        
+                                input(type="hidden" name="lob_id" value=p.console.lob_edit.id)
+                                div(class="form-group")
+                                    label(for="lob_name") Nome
+                                    input(class="form-control" type="text" id="lob_name" name="lob_name" value=p.console.lob_edit.name) 
+                                div(class="form-group")
+                                    label(for="lob_desc") Descrição
+                                    textarea(class="form-control" type="text" id="lob_desc" name="lob_desc" value=p.console.lob_edit.desc) 
+                                                    
+                                div(class="form-group")
+                                    label(for="lob_type") Tipo
+                                    select(class="form-control" id="lob_type" name="lob_type" value=p.console.lob_edit.type)
+                                        option Interno
+                                        option Externo
+                                        option Link
+                                div(id="lob_internal")               
+                                    include lob_form_attachfile    
+                                
+                                div(id="lob_external" hidden)                
+                                    include lob_form_listexternal  
+
+                                div(id="lob_link" hidden)                
+                                    include lob_form_link
+
+                        
+                             
+                            div(class="tab-pane" id="lob_lifecycle")
+                                div(class="form-group")
+                                    label(for="lob_vigency_start") Data Início Vigênca
+                                    div( class='input-group date' id='datetimepicker_start')
+                                        input(class="form-control" type="text" id="lob_vigency_start" name="lob_vigency_start" value=p.console.lob_edit.vigency_start)
+                                        span(class="input-group-addon")
+                                            span(class="glyphicon glyphicon-calendar")
+                            
+                                div(class="form-group")
+                                    label(for="lob_vigency_end") Data Fim Vigênca
+                                    div( class='input-group date' id='datetimepicker_end')
+                                        input(class="form-control" type="text" id="lob_vigency_end" name="lob_vigency_end" value=p.console.lob_edit.vigency_end)
+                                        span(class="input-group-addon")
+                                            span(class="glyphicon glyphicon-calendar")
+                                div(class="form-group")
+                                    label(for="lob_active") Ativo
+                                    input(class="checkbox" type="checkbox" id="lob_active" name="lob_active" checked=p.console.lob_edit.active)
+                                                                                                 
+
+                            div(class="tab-pane" id="lob_metadata")
+                                p Metadados TBD
+                            
+                            
+                            div(class="tab-pane" id="lob_preview")
+                                div(class="form-group")
+                                    a(href=p.console.lob_edit.object.Location) Clique aqui para visualizar o arquivo
+                                    
+
+                            div(class="tab-pane" id="lob_reqexibition")
+                                p Requisitos de Exibição  TBD
+
+                            div(class="tab-pane" id="lob_educational")
+                                include ../../common/learningStyle    
+
+                            div(class="tab-pane" id="lob_rights")
+                                p Direitos   TBD    
+                            div(class="tab-pane" id="lob_relation")
+                                p Relação com outros assuntos TBD    
+                            div(class="tab-pane" id="lob_annotation")
+                                p Anotações e comentários TBD      
+
+
+                            div(class="tab-pane" id="lob_taxonomies")
+                                input(type="hidden" id="lob_selectedtaxonomies" name="lob_selectedtaxonomies" value="")
+                                - var taxonomies = p.console.lob_edit.taxonomylist;
+                                div(class="form-group")
+                                    label(for="lob_type") Selecione a Árvore
+                                    select(class="form-control" id="taxon_tree" name="taxon_tree" )
+                                        option Selecione a árvore
+                                        each item in taxonomies
+                                            option(value=item._id ) #{item.structure.name}    
+                                div.row-fluid
+                                   div.span12   
+                                       div(id="tree" class="span6")       
+                                       
+
+
+
+                            ul.list-inline
+                                    li
+                                        button(class="btn btn-primary" type="submit" id="lob_form_action") Salvar
+                                        
+                if p.console.lob_edit.id != null
+                    div(class="modal-body")
+                            ul.list-inline
+                                li
+                                    form(id="fm_removelob" action="/console/lob/remove" method="POST")
+                                        input(type="hidden" name="lob_id_remove" value=p.console.lob_edit.id)
+                                        button(class="btn btn-danger " type="submit") Excluir                                
+
+                div(class="modal-footer")
+                    button(class="close" data-dismiss="modal" onclick=("navigateTo('/console/lob')")) Fechar
+    script.   
+        var t = !{JSON.stringify(p.console.lob_edit.taxonomylist)}
+        var selectedNode = {tree:null, node: 0};
+        var enabled_trees = !{JSON.stringify(p.console.lob_edit.taxonomies)}
+
+        
+        //console.log('enabled_treees' +  enabled_trees);
+        
+        enabled_trees.update = function(item) {
+                                for (var i = 0; i < this.length; i++) {
+                                  if (item.tree === this[i].tree) {
+                                    return this[i].nodes = item.nodes;
+                                  }
+                                }
+                                    return this.push(item);
+                                };
+
+        enabled_trees.save = function() {
+            console.log(this);
+            $('#lob_selectedtaxonomies').val(JSON.stringify(this));
+        };       
+
+        var load = function(selectedTree, tree)  {
+            var check =  function(id) {
+                var enabled = false;
+                tree.nodes.forEach(function(item) {
+                  if (id === item) {
+                       enabled = true;
+                    }
+                });
+                return enabled;
+            }; 
+
+            var validate = function(subtree) {
+                subtree.state = {checked: check(subtree.id)};
+                for (var i = 0; i < subtree.nodes.length; i++) {
+                    validate(subtree.nodes[i]);
+                }
+                return subtree;
+            };
+            return validate(selectedTree.tree);    
+        };
+        
+        $('#lob_type').change(function() {
+            var arshow = [true,false,false]; 
+            switch($('#lob_type').val()) {
+                case "Interno": 
+                    arshow = [false,true,true];
+                    break;
+                case "Externo":
+                    arshow = [true,false,true];
+                    break;
+                
+                case "Link":
+                    arshow = [true,true,false];
+                    break;
+                
+            }
+    
+            $('#lob_internal').attr('hidden', arshow[0]);
+            $('#lob_external').attr('hidden', arshow[1]);
+            $('#lob_link').attr('hidden', arshow[2]);
+            
+        });
+
+        $('#taxon_tree').change(function() {
+                var enabled_taxon = enabled_trees.filter(el => el.tree === $('#taxon_tree').val())[0];
+                if (enabled_taxon == undefined) {   
+                      enabled_taxon = {tree:"", nodes:[]};
+                }
+                var obj = t.filter(x => x._id === $('#taxon_tree').val())[0];
+                var selectedTree = [{text: obj.tree.text,id: obj.tree.id , path: obj.tree.id, nodes: obj.tree.nodes , expand: obj.expand}];    
+                selectedNode = {tree: null, node: 0};    
+                load(obj, enabled_taxon);
+                var $tree = $('#tree').treeview({data: selectedTree, showCheckbox: true});
+                $tree.load = function() {
+                    $(this).treeview('checkNode', [ nodeId, { silent: true } ]);
+                    for(var i in node.nodes) {
+                        var child = node.nodes[i];
+                        $(this).treeview(true).checkNode(child.nodeId);
+                    }                    
+                }
+                $tree.on('nodeChecked ', function(ev, node) {
+                    enabled_taxon.tree = $('#taxon_tree').val();
+                    enabled_taxon.nodes.push(node.id);
+                    for(var i in node.nodes) {
+                        var child = node.nodes[i];
+                        $(this).treeview(true).checkNode(child.nodeId);
+                    }
+                    enabled_trees.update(enabled_taxon);
+                    enabled_trees.save(); 
+                }).on('nodeUnchecked', function(ev, node) {
+                    enabled_taxon.nodes = enabled_taxon.nodes.filter(el => el !== node.id);                        
+                    for(var i in node.nodes) {
+                        var child = node.nodes[i];
+                        $(this).treeview(true).uncheckNode(child.nodeId);
+                    }
+                    enabled_trees.update(enabled_taxon);
+                    enabled_trees.save(); 
+
+                });
+        });      
+
+        $(function () {
+                $('#datetimepicker_start').datetimepicker({
+                    useCurrent: false, //Important! See issue #1075
+                    format:'YYYY-MM-DD'
+                });
+                $('#datetimepicker_end').datetimepicker({
+                    useCurrent: false, //Important! See issue #1075
+                    format:'YYYY-MM-DD'
+                });
+                $("#datetimepicker_start").on("dp.change", function (e) {
+                    $('#datetimepicker_end').data("DateTimePicker").minDate(e.date);
+                });
+                $("#datetimepicker_end").on("dp.change", function (e) {
+                    $('#datetimepicker_start').data("DateTimePicker").maxDate(e.date);
+                });                
+        });

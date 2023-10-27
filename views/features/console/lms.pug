@@ -1,0 +1,37 @@
+extends ../../common/layout
+
+block content
+    div.container-fluid
+        div.jumbotron
+            div
+                p Ambientes Cadastrados
+                table(class="table table-striped")
+                    tr
+                        th Nome
+                        th Plataforma
+                        th Versão
+                        th URL
+                        th Ação
+                    each lms in p.console.lms
+                        - var edit_action = ("navigateTo('/console/lms/form/" + lms.id + "')");
+                        tr
+                            td #{lms.name}
+                            td #{lms.platform}
+                            td #{lms.version}
+                            td #{lms.url}
+                            td 
+                                div
+                                    ul(class="list-inline")
+                                        li
+                                            button(class="btn btn-primary btn-xs" onclick=(edit_action)) Editar
+                
+block action
+    div.container-fluid
+        ul(class="nav navbar-nav")
+            li
+                a  
+                    button(class="btn btn-primary" id="newLms" onclick=("navigateTo('/console/lms/form')")) Adicionar ambiente 
+            li
+                a  
+                    button(class="btn btn-danger" id="console" onclick=("navigateTo('/console')")) Retornar  
+            

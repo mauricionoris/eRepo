@@ -1,0 +1,41 @@
+extends ../../common/layout
+
+block content
+    div.container-fluid
+        div.jumbotron
+            form(id="fm_user" action="/console/user" method="POST")
+                div.tab-content
+                    div(class="tab-pane active" id="lms_info")
+                        input(type="hidden" id="user_id" name="user_id" value=p.profile.id)
+                        div(class="form-group")
+                            label(for="user_name") Nome
+                            input(class="form-control" type="text" id="user_name" name="user_name" value=p.profile.name) 
+                        div(class="form-group")
+                            label(for="user_description") Descrição
+                            input(class="form-control" type="text" id="user_description" name="user_description" value=p.profile.description)
+                        div(class="form-group")
+                            label(for="user_url") Site
+                            input(class="form-control" type="text" id="user_url" name="user_url" value=p.profile.url)
+                        div(class="form-group")
+                            label(for="user_email") Email
+                            input(class="form-control" type="text" id="user_email" name="user_email" value=p.profile.email)
+                        div(class="form-group")
+                            label(for="storage_key") Storage URL
+                            input(class="form-control" type="text" id="storage_url" name="storage_url" value=p.profile.storage)                            
+                        div(class="form-group")
+                            label(for="storage_key") Chave do Storage
+                            input(class="form-control" type="text" id="storage_key" name="storage_key" value=p.profile.key)
+                        div(class="form-group")
+                            label(for="storage_secret") Segredo do Storage
+                            input(class="form-control" type="text" id="storage_secret" name="storage_secret" value=p.profile.secret)
+                        ul.list-inline
+                            li
+                                button(class="btn btn-primary" type="submit" id="user_form_action") Salvar
+block action
+    div.container-fluid
+        ul(class="nav navbar-nav")
+            li
+                a  
+                    button(class="btn btn-primary" id="return" onclick=("navigateTo('/console')")) Console
+
+            

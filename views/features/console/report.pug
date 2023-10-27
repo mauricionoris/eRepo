@@ -1,0 +1,25 @@
+extends ../../common/layout
+
+block content
+    div.container-fluid
+        div.jumbotron
+            div
+                p Usuário: #{p.user.displayName}
+            table(class="table table-striped")
+                tr
+                    th # Objetos
+                    th # Ambientes
+                    th # Acessos
+                    th # Taxonomias
+                tr
+                    td 1
+                    td 2
+                    td 3
+                    td 4
+                
+block action
+    div.container
+        ul(class="nav navbar-nav")
+            li
+                a  
+                    button(class="btn btn-danger" id="console" onclick=("navigateTo('/console')")) Retornar

@@ -1,0 +1,31 @@
+extends layout
+
+block content
+   form(name="new", method="post" action="uploadobject", enctype="multipart/form-data")
+    p Bucket ID: 
+      input(type="text", enabled="false",name="bucketId", value="#{bucketId}")
+    div#newobject
+      ul.table
+        div.header
+          li.row
+            span.key Inform the object key
+            span.subject Select the subject
+            span.file Select the file
+            span.confirm Confirm
+        div.body
+          li.row
+            span
+                input(type="text", id='objectKey' , name="objectKey")
+            span
+                select(id="subject_id", name="subject_id")
+                    option(value='0') 
+                    for s in subjects
+                        option(value='#{s.subject_id}') #{s.title}
+            span
+                input(type="file", name="filefield")
+            span
+                input(type="submit", value="Upload")
+         
+
+
+              

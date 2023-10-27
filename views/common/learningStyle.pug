@@ -1,0 +1,37 @@
+div(class="row")
+    h3 Estilo de aprendizagem
+    
+    div(class="col-xs-4")
+        label(for="lob_style") Selecione
+            select(class="form-control" id="lob_style" name="lob_style")
+
+    div(class="col-xs-8")
+        img(src="/images/Feldman-soloman-index.jpg" )    
+
+    
+    script.
+        
+        var learningStyles = [
+            {id:0  ,name: "Indefinido"},
+            {id:1  ,name: "ACT - SEN - VIS - SEQ"},
+            {id:2  ,name: "ACT - SEN - VIS - GLO"},
+            {id:3  ,name: "ACT - SEN - VRB - SEQ"},
+            {id:4  ,name: "ACT - SEN - VRB - GLO"},
+            {id:5  ,name: "ACT - INT - VIS - SEQ"},
+            {id:6  ,name: "ACT - INT - VIS - GLO"},
+            {id:7  ,name: "ACT - INT - VRB - SEQ"},
+            {id:8  ,name: "ACT - INT - VRB - GLO"},
+            {id:9  ,name: "REF - SEN - VIS - SEQ"},
+            {id:10 ,name: "REF - SEN - VIS - GLO"},
+            {id:11 ,name: "REF - SEN - VRB - SEQ"},
+            {id:12 ,name: "REF - SEN - VRB - GLO"},
+            {id:13 ,name: "REF - INT - VIS - SEQ"},
+            {id:14 ,name: "REF - INT - VIS - GLO"},
+            {id:15 ,name: "REF - INT - VRB - SEQ"},
+            {id:16 ,name: "REF - INT - VRB - GLO"}
+        ];    
+        
+        var select = $("#lob_style");
+            learningStyles.forEach(function (el) {
+                select.append($("<option />").val(el.id).text(el.name));
+            });

@@ -1,0 +1,40 @@
+extends ../../common/layout
+
+block content
+    div.container-fluid
+        div.jumbotron
+            div
+                p Objetos de Aprendizagem
+            table(class="table table-striped")
+                tr
+                    th Nome
+                    th Tipo
+                    th Estilo 
+                    th Vigente até
+                    th Ação
+                each lob in p.console.lob
+                 - var edit_action = ("navigateTo('/console/lob/form/" + lob.id + "')");
+                    tr
+                        td #{lob.name}
+                        td #{lob.type}
+                        td #{lob.style}
+                        td #{lob.vigency_end}
+                        td 
+                            div
+                                ul(class="list-inline")
+                                    li
+                                        button(class="btn btn-primary btn-xs" onclick=(edit_action)) Editar
+        
+
+block action
+    div.container-fluid
+        ul(class="nav navbar-nav")
+            li
+                a  
+                    button(class="btn btn-primary" id="newLob" onclick=("navigateTo('/console/lob/form')")) Adicionar Objeto de Aprendizagem 
+            li
+                a  
+                    button(class="btn btn-danger" id="console" onclick=("navigateTo('/console')")) Retornar
+
+           
+            

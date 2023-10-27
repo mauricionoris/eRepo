@@ -1,0 +1,55 @@
+html
+    head
+        link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+    body
+        div.container
+            .row
+                form(id='frm_subject' method='POST' action='/lti/launch/srls')
+                    .panel.panel-info
+                        .panel-heading
+                            h3 Welcome #{inf.username} !
+                            h5 This is the student page of #{inf.resource_link_title}
+                        .panel-body
+                            .row
+                                table.table.table-user-information
+                                    tbody
+                                        tr
+                                            td List of objects
+                                    for o in inf.objects
+                                        tr                    
+                                            td 
+                                                a(href='#{o.url}', target='_blank') #{o.object_key}
+                        .panel-footer
+                            button.btn.btn-warning(type='button' id='return') Close
+            
+
+
+            input(type='hidden' name='inf', id='inf' value='#{JSON.stringify(inf)}')
+            input(type='hidden' name='currentitem', id='currentitem')
+
+
+            #myModal3.modal.fade(role='dialog')
+              .modal-dialog
+                // Modal content
+                .modal-content
+                  .modal-header
+                    button.close(type='button', data-dismiss='modal') ×
+                    h4.modal-title Objects of #{inf.selected_subject}
+                  .modal-body
+                    div(id='div_object')
+                        div(id='loading')
+                       
+                  .modal-footer
+                    button.btn.btn-default(type='button', id='previous') Previous
+                    button.btn.btn-default(type='button', id='next') Next
+                    button.btn.btn-default(type='button', data-dismiss='modal') Close
+                    
+    script(type='text/javascript' src='http://code.jquery.com/jquery.min.js')
+    script(type='text/javascript' src='/javascripts/bootstrap.min.js')
+    script(rel='text/javascript'  src='/javascripts/pdfobject.min.js')
+    script(rel='text/javascript'  src='/javascripts/studentview.js')
+
+
+
+             

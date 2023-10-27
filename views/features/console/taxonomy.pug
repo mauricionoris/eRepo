@@ -1,0 +1,120 @@
+extends ../../common/layout
+
+block content
+    div.container-fluid
+        div.jumbotron
+            div.row-fluid
+               div.span12
+                    div(class="form-group")
+                        label(for="lob_type") Selecione a Árvore
+                        select(class="form-control" id="taxon_tree" name="taxon_tree" )
+                            option Selecione a árvore
+                            each item in p.taxonomy
+                               option(value=item._id  selected= (item._id == p.expand_taxonomy.id )) #{item.structure.name}    
+            div.row-fluid
+               div.span12
+                    ul.list-inline
+                        li
+                            button(class="btn btn-primary" id="btnNew" onclick=("navigateTo('/console/taxonomy/form')")) Criar Nova                                
+  
+            div.row-fluid
+                br
+            div.row-fluid
+               div.span12   
+                   div(id="tree" class="span6")
+                   div(id="desc" class="span6")
+                       textarea(id="nodeDescription" class="form-control" )
+            div.row-fluid
+                br
+            div.row-fluid
+               div.span12
+                   button(class="btn btn-primary" id="btnCol") Editar  
+            div.row-fluid
+               div.span12
+                    div( id="fm_edit" class="collapse" )
+                        form(id="fm_edit_taxonomy" enctype="application/json" method="POST")
+                            input(type="hidden" id="addLocation" name="addLocation")
+  
+                            div(class="form-group")
+                                label(for="node_text" id="lbl-selected-item")  Item
+                                input(class="form-control" type="text" id="node_text" name="node_text")
+                            div(class="form-group")
+                                label(for="node_description" id="lbl-selected-description" )  Descrição
+                                textarea(class="form-control" type="text" id="node_description" name="node_description")
+                            ul.list-inline
+                                li
+                                    button(class="btn btn-primary" id="console" onclick=("setAddChildAction()")) Incluir
+                                li
+                                    button(class="btn btn-danger" id="console" onclick=("setRemoveSelectedAction()")) Excluir Item Selecionado
+block action
+    div.container-fluid
+        ul(class="nav navbar-nav")
+            li
+                a  
+                    button(class="btn btn-primary" id="console" onclick=("navigateTo('/console')")) Importar
+            li
+                a  
+                    button(class="btn btn-primary" id="console" onclick=("navigateTo('/console')")) Exportar 
+            li
+                a  
+                    button(class="btn btn-danger" id="console" onclick=("navigateTo('/console')")) Retornar
+            
+    script.
+        var t = !{JSON.stringify(p.taxonomy)}
+        var st = !{JSON.stringify(p.expand_taxonomy)}
+        var selectedNode = {tree:null, node: 0};
+
+        if (st != "") {
+                var obj = t.filter(x => x._id === st.id)[0];
+                var selectedTree = [{text: obj.tree.text,id: obj.tree.id , path: obj.tree.id, nodes: obj.tree.nodes , expand: obj.expand}]    
+                selectedNode.tree = selectedTree.id;
+                $('#tree').treeview({data: selectedTree});
+                $('#tree').treeview('expandAll'); 
+        }                
+         
+        function setAddChildAction() {
+            var action = "/console/taxonomy/appendchild/" + selectedNode.tree + "/" + selectedNode.node;
+            console.log(action);
+            
+            taxonomy_edit_submit(action);
+        }
+        
+        function setRemoveSelectedAction() {
+            var action = "/console/taxonomy/removechild/" + selectedNode.tree + "/" + selectedNode.node;
+           console.log(action);
+
+            taxonomy_edit_submit(action);            
+        }
+
+        function taxonomy_edit_submit(action) {
+            dynamicFormSubmit('fm_edit_taxonomy', action);
+        }
+
+        $('#btnCol').click(function(){
+          var c = 'collapse in';   
+          $('#fm_edit').attr('class', (c == $('#fm_edit').attr('class') ) ? 'collapse': c );
+          $('#fm_remove').attr('class', (c == $('#fm_remove').attr('class') ) ? 'collapse': c );          
+        });
+        
+        $('#taxon_tree').change(function() {
+                var obj = t.filter(x => x._id === $('#taxon_tree').val())[0];
+                console.log(obj);
+                var selectedTree = [{text: obj.tree.text,id: obj.tree.id , path: obj.tree.id, nodes: obj.tree.nodes , expand: obj.expand}]    
+                selectedNode = {tree: obj._id, node: 0};    
+                console.log(selectedTree);
+                console.log(selectedNode);
+                $('#tree').treeview({data: selectedTree});
+                $('#tree').treeview('expandAll', { levels: 1, silent: false });
+                $('#tree').treeview('selectNode', [ 0 ]);
+             
+            $('#tree').on('nodeSelected', function(event, data) {
+                $('#nodeDescription').text(data.description);
+                $('#lbl-selected-item').text("Item: " + data.text);
+                selectedNode = {tree: $('#taxon_tree').val(),  node: data.path};        
+
+                console.log(selectedNode);                
+            });   
+
+        });
+     
+

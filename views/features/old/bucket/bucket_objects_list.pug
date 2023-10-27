@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  h3 Objects stored on the Bucket: #{bucketId}
+  //p #{JSON.stringify(object_list)}
+  div#objects
+    ul.table
+      div.header
+        li.row
+          span.key key
+          span.lastmodified Last Modified at
+          span.owner Owner 
+          span.detail Content
+          span.url Link
+          span.delete Delete
+      div.body 
+        - each obj in object_list
+           li.row
+            span  #{obj.Key} 
+            span  #{obj.LastModified}
+            span  #{obj.Owner.DisplayName}
+            span 
+              a(href='objects/#{obj.Key}') Detail  
+            span
+              a(href='objects/url/#{obj.Key}') Url
+            span
+              a(href='objects/remove/#{obj.Key}') Remove
+  div#new
+    h3 Upload a new object
+    form(name="new", method="get" action="objects/-1")
+       input(type="submit", value="add new object")
+

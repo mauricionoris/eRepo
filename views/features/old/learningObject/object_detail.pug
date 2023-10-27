@@ -1,0 +1,8 @@
+script(src='..public/javascripts/viewer.js')
+extends layout
+
+block content
+  p Details of the object  #{objectKey} contained on the Bucket: #{bucketId}
+  div 
+   iframe(width='600', height='480', scrolling='no', frameborder='no', src='#{url}')
+  a(href='/buckets/#{bucketId}/objects') Return to the objects list

@@ -1,0 +1,37 @@
+extends ../../common/layout
+
+block content
+    div.container-fluid
+        div.jumbotron
+            div
+                p Usuário: #{p.profile.name} 
+            table(class="table table-striped")
+                tr
+                    th # Objetos
+                    th # Ambientes
+                    th # Acessos
+                    th # Taxonomias
+                tr
+                    td #{p.console.main.num_objects} 
+                    td #{p.console.main.num_environments}
+                    td #{p.console.main.num_access}
+                    td #{p.console.main.num_taxonomies}
+                
+block action
+    div.container-fluid
+        ul(class="nav navbar-nav")
+            li
+                a  
+                    button(class="btn btn-primary" id="lms" onclick="navigateTo('/console/lms')") Ambientes 
+            li
+                a  
+                    button(class="btn btn-primary" id="lob" onclick="navigateTo('/console/lob')") Objetos 
+            li        
+                a  
+                    button(class="btn btn-primary" id="taxon" onclick="navigateTo('/console/taxonomy')") Taxonomias
+            li            
+                a  
+                    button(class="btn btn-primary" id="report" onclick="navigateTo('/console/report')") Relatórios
+            
+            
+

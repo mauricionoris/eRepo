@@ -1,0 +1,27 @@
+extends layout
+
+block content
+    div.container-fluid
+        h3 List of buckets 
+        div#buckets
+          ul.table
+            div.header
+              li.row
+                span.name ID
+                span.creationdate Created at
+                span.edit Details 
+                span.objects List of Objects
+            div.body 
+              - each bucket in bucket_list
+                 li.row
+                  span  #{bucket.Name} 
+                  span  #{bucket.CreationDate} 
+                  span 
+                    a(href='/buckets/#{bucket.Name}') Edit
+                  span
+                    a(href='/buckets/#{bucket.Name}/objects') Objects
+
+        div#new
+          h3 New Bucket
+          form(name="new", method="get" action="/buckets/-1")
+             input(type="submit", value="add new bucket")

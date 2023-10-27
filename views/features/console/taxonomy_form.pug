@@ -1,0 +1,38 @@
+extends ../../common/layout
+
+block content
+    div(class="modal show" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel")
+        div(class="modal-dialog modal-lg" role="document")
+            div(class="modal-content")
+                div(class="modal-header")
+                    button(class="close" data-dismiss="modal" onclick=("navigateTo('/console/taxonomy')")) 
+                        span(aria-hidden="true") &times;
+                    h4(class="modal-title") Estrutura taxononica
+                div(class="modal-body")
+                    ul(class="nav nav-tabs" id="tabContent")
+                        li(class="active")
+                            a(href="#lms_info" data-toggle="tab") Cadastro
+               
+                div(class="modal-body")
+                    form(id="fm_taxonomy" action="/console/taxonomy/form" method="POST")
+                        div.tab-content
+                            div(class="tab-pane active" id="lms_info")
+                                input(type="hidden" name="tree_id" value="")
+                                div(class="form-group")
+                                    label(for="lms_name") Nome
+                                    input(class="form-control" type="text" id="name" name="name" value="") 
+                                div(class="form-group")
+                                    label(for="lms_platform") Versão
+                                    input(class="form-control" type="text" id="version" name="version" value="1.0")
+                                div(class="form-group")
+                                    label(for="lms_active") Ativo
+                                        input(type="checkbox" class="checkbox" id="active" name="active" checked=true)                                    
+                                div(class="form-group")
+                                    label(for="lms_secret") Root 
+                                    input(class="form-control" type="text" id="rootname" name="rootname" value="")
+                                ul.list-inline
+                                    li
+                                        button(class="btn btn-primary" type="submit" id="new_taxonomy_action") Salvar
+                                    
+                div(class="modal-footer")
+                    button(class="close" data-dismiss="modal" onclick=("navigateTo('/console/taxonomy')")) Fechar

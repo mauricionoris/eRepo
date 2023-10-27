@@ -1,0 +1,24 @@
+div.navbar.navbar-default.navbar-fixed-top(role='navigation')
+    div.container-fluid
+        div.navbar-header
+            button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+            a.navbar-brand(href="")
+                img(src="/images/toomrepobrancomaozinha.png" class="logo" alt="logo")
+        div.collapse.navbar-collapse
+            ul.nav.navbar-nav.navbar-right
+                - if (!p.user) {
+                    li
+                      a  
+                        button(class="btn btn-success" id="login") Login 
+                - }        
+                - else {        
+                    li
+                       a
+                         button(class="btn btn-info" onclick="navigateTo('/console/user')") #{p.profile.name} 
+                    li
+                       a
+                         button(class="btn btn-danger" onclick="navigateTo('/')") Logout
+                - }   

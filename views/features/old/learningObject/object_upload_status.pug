@@ -1,0 +1,9 @@
+//script(src='..public/javascripts/viewer.js')
+extends layout
+
+block content
+  p Link to the object  #{objectKey} contained on the Bucket: #{bucketId}
+  div#status
+   p Completed upload in #{TimeToUpload} seconds 
+   textarea #{JSON.stringify(data)}
+  a(href='/buckets/#{bucketId}/objects') Return to the objects list
